@@ -4,309 +4,206 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Smart Concierge - AI Recommendations</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              400: '#38bdf8',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+            }
+          }
+        }
+      }
+    }
+  </script>
   <style>
-    :root {
-      --bg: #0f172a;
-      --card-bg: #1e293b;
-      --text-main: #f8fafc;
-      --text-sub: #94a3b8;
-      --accent: #38bdf8;
-      --accent-hover: #0284c7;
-      --border: #334155;
-      --success: #34d399;
-      --error: #f87171;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    }
-
     body {
-      background-color: var(--bg);
-      color: var(--text-main);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem 1rem;
+      background-color: #0f172a;
+      color: #f8fafc;
     }
-
-    header {
-      text-align: center;
-      margin-bottom: 2.5rem;
-    }
-
-    header h1 {
-      font-size: 2.25rem;
-      font-weight: 700;
-      letter-spacing: -0.025em;
-      margin-bottom: 0.5rem;
-    }
-
-    header p {
-      color: var(--text-sub);
-      font-size: 1rem;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 760px;
-    }
-
-    /* Home View: Cards */
     .view {
       display: none;
     }
-
     .view.active {
       display: block;
+      animation: fadeIn 0.25s ease-in-out;
     }
-
-    .category-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .category-card {
-      background-color: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 2rem 1.5rem;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s ease-in-out;
-    }
-
-    .category-card:hover {
-      transform: translateY(-4px);
-      border-color: var(--accent);
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-    }
-
-    .category-icon {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-    }
-
-    .category-title {
-      font-size: 1.25rem;
-      font-weight: 600;
-      margin-bottom: 0.25rem;
-    }
-
-    .category-desc {
-      font-size: 0.875rem;
-      color: var(--text-sub);
-    }
-
-    /* Detail View: Form */
-    .form-card {
-      background-color: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 2rem;
-    }
-
-    .back-btn {
-      background: none;
-      border: none;
-      color: var(--accent);
-      cursor: pointer;
-      font-size: 0.875rem;
-      font-weight: 500;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .back-btn:hover {
-      text-decoration: underline;
-    }
-
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
-
-    .form-label {
-      display: block;
-      font-size: 0.875rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      color: var(--text-main);
-    }
-
-    .form-label span {
-      color: var(--text-sub);
-      font-weight: 400;
-    }
-
-    .file-dropzone {
-      border: 2px dashed var(--border);
-      border-radius: 8px;
-      padding: 1.5rem;
-      text-align: center;
-      cursor: pointer;
-      transition: border-color 0.2s;
-    }
-
-    .file-dropzone:hover {
-      border-color: var(--accent);
-    }
-
-    .file-dropzone input[type="file"] {
-      display: none;
-    }
-
-    .file-info {
-      font-size: 0.875rem;
-      color: var(--text-sub);
-      margin-top: 0.5rem;
-    }
-
-    textarea {
-      width: 100%;
-      background-color: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0.75rem 1rem;
-      color: var(--text-main);
-      font-size: 0.95rem;
-      min-height: 120px;
-      resize: vertical;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    textarea:focus {
-      border-color: var(--accent);
-    }
-
-    .submit-btn {
-      width: 100%;
-      background-color: var(--accent);
-      color: #0f172a;
-      border: none;
-      border-radius: 8px;
-      padding: 0.875rem 1.5rem;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    .submit-btn:hover:not(:disabled) {
-      background-color: var(--accent-hover);
-    }
-
-    .submit-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    /* Result Section */
-    .result-section {
-      margin-top: 2rem;
-      border-top: 1px solid var(--border);
-      padding-top: 1.5rem;
-      display: none;
-    }
-
-    .result-section.active {
-      display: block;
-    }
-
-    .result-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 0.75rem;
-      color: var(--success);
-    }
-
-    .result-content {
-      background-color: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1rem;
-      white-space: pre-wrap;
-      font-family: inherit;
-      font-size: 0.9rem;
-      line-height: 1.6;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col items-center px-4 py-8 md:py-12 selection:bg-brand-500 selection:text-white">
 
-<header>
-  <h1>AI Nudging</h1>
-  <p>Upload your database and specify your requirements for tailored recommendations</p>
+<header class="text-center mb-10 max-w-2xl">
+  <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-brand-400 text-xs font-semibold uppercase tracking-wider mb-3">
+    <span class="w-2 h-2 rounded-full bg-brand-400 animate-pulse"></span>
+    AI-Powered Analytics
+  </div>
+  <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-white mb-2">Smart Concierge</h1>
+  <p class="text-slate-400 text-sm md:text-base leading-relaxed">
+    Select a category, load or upload your product database, and get personalized recommendations powered by Gemini AI.
+  </p>
 </header>
 
-<main class="container">
-  <!-- Category Selection View -->
+<main class="w-full max-w-3xl">
+  <!-- Category Selection View (Home) -->
   <section id="homeView" class="view active">
-    <div class="category-grid">
-      <div class="category-card" onclick="openCategory('Grocery')">
-        <div class="category-icon">🛒</div>
-        <div class="category-title">Grocery</div>
-        <div class="category-desc">Fresh food, pantry supplies, and store inventory</div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+      <!-- Grocery Card -->
+      <div onclick="openCategory('Grocery')" class="group cursor-pointer bg-slate-800/80 hover:bg-slate-800 border border-slate-700 hover:border-brand-400/70 rounded-2xl p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-brand-500/10 flex flex-col items-center">
+        <div class="w-16 h-16 rounded-2xl bg-slate-700/60 border border-slate-600/50 flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform">
+          🛒
+        </div>
+        <h2 class="text-lg font-bold text-white mb-1.5 group-hover:text-brand-400 transition-colors">Grocery</h2>
+        <p class="text-xs text-slate-400 leading-relaxed">Fresh produce, beverages, nutritional values, and supermarket inventory</p>
       </div>
-      <div class="category-card" onclick="openCategory('Hotel')">
-        <div class="category-icon">🏨</div>
-        <div class="category-title">Hotel</div>
-        <div class="category-desc">Accommodations, amenities, and room availability</div>
+
+      <!-- Hotel Card -->
+      <div onclick="openCategory('Hotel')" class="group cursor-pointer bg-slate-800/80 hover:bg-slate-800 border border-slate-700 hover:border-brand-400/70 rounded-2xl p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-brand-500/10 flex flex-col items-center">
+        <div class="w-16 h-16 rounded-2xl bg-slate-700/60 border border-slate-600/50 flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform">
+          🏨
+        </div>
+        <h2 class="text-lg font-bold text-white mb-1.5 group-hover:text-brand-400 transition-colors">Hotel</h2>
+        <p class="text-xs text-slate-400 leading-relaxed">Accommodations, room suites, harbor views, breakfast perks, and amenities</p>
       </div>
-      <div class="category-card" onclick="openCategory('Restaurant')">
-        <div class="category-icon">🍽️</div>
-        <div class="category-title">Restaurant</div>
-        <div class="category-desc">Dining spots, dietary menus, and reservations</div>
+
+      <!-- Restaurant Card -->
+      <div onclick="openCategory('Restaurant')" class="group cursor-pointer bg-slate-800/80 hover:bg-slate-800 border border-slate-700 hover:border-brand-400/70 rounded-2xl p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-brand-500/10 flex flex-col items-center">
+        <div class="w-16 h-16 rounded-2xl bg-slate-700/60 border border-slate-600/50 flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform">
+          🍽️
+        </div>
+        <h2 class="text-lg font-bold text-white mb-1.5 group-hover:text-brand-400 transition-colors">Restaurant</h2>
+        <p class="text-xs text-slate-400 leading-relaxed">Gourmet menus, dietary requirements, dining spots, and chef specials</p>
       </div>
+
     </div>
   </section>
 
-  <!-- Detail View: Form & Results -->
+  <!-- Form & Analysis View -->
   <section id="formView" class="view">
-    <div class="form-card">
-      <button class="back-btn" onclick="backToHome()">← Back to Categories</button>
-      <h2 id="activeCategoryTitle" style="margin-bottom: 1.5rem;">Category Analysis</h2>
+    <div class="bg-slate-800/90 border border-slate-700/80 rounded-2xl p-6 md:p-8 shadow-2xl backdrop-blur-sm">
 
-      <form id="recommendationForm" onsubmit="handleFormSubmit(event)">
-        <!-- JSON Upload -->
-        <div class="form-group">
-          <label class="form-label">
-            Database File <span>(.json format)</span>
-          </label>
-          <div class="file-dropzone" onclick="document.getElementById('dbFile').click()">
-            <input type="file" id="dbFile" accept=".json" onchange="handleFileSelect(event)" />
-            <div id="dropzoneText">Click or drag & drop a .json database file here</div>
-            <div id="fileStatus" class="file-info"></div>
+      <!-- Navigation Bar -->
+      <div class="flex items-center justify-between pb-5 mb-6 border-b border-slate-700/60">
+        <button type="button" onclick="backToHome()" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-slate-700/50 hover:bg-slate-700 text-brand-400 hover:text-brand-300 text-sm font-medium transition-colors border border-slate-600/50">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+          Back to Categories
+        </button>
+        <span id="categoryBadge" class="text-xs px-2.5 py-1 rounded-md bg-brand-500/10 text-brand-400 font-semibold border border-brand-500/20">Category</span>
+      </div>
+
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+        <h2 id="activeCategoryTitle" class="text-2xl font-bold text-white tracking-tight">Recommendation Form</h2>
+
+        <!-- Special Quick Template Button (Displayed for Hotel) -->
+        <button
+          type="button"
+          id="loadHotelTemplateBtn"
+          onclick="loadTemplateJson()"
+          class="hidden inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl bg-brand-500/15 hover:bg-brand-500/25 text-brand-400 border border-brand-400/40 text-xs font-semibold transition-all hover:scale-[1.02] shadow-sm"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+          Load Pre-configured `template.json`
+        </button>
+      </div>
+
+      <form id="recommendationForm" onsubmit="handleFormSubmit(event)" class="space-y-6">
+
+        <!-- Database File Dropzone -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label class="block text-sm font-medium text-slate-200">
+              Database File <span class="text-slate-400 font-normal">(.json format, at least 3 items)</span>
+            </label>
+            <button
+              type="button"
+              id="clearDbBtn"
+              onclick="clearLoadedDatabase()"
+              class="hidden text-xs text-rose-400 hover:text-rose-300 underline font-medium"
+            >
+              Clear Database
+            </button>
+          </div>
+
+          <div
+            id="dropzoneContainer"
+            onclick="document.getElementById('dbFile').click()"
+            class="group relative cursor-pointer border-2 border-dashed border-slate-600 hover:border-brand-400 bg-slate-900/50 hover:bg-slate-900/80 rounded-xl p-6 text-center transition-all duration-200"
+          >
+            <input type="file" id="dbFile" accept=".json" onchange="handleFileSelect(event)" class="hidden" />
+
+            <div class="flex flex-col items-center">
+              <div id="dropzoneIcon" class="w-12 h-12 rounded-full bg-slate-800 text-slate-400 group-hover:text-brand-400 flex items-center justify-center text-xl mb-3 transition-colors">
+                📄
+              </div>
+              <p id="dropzoneText" class="text-sm font-medium text-slate-300 group-hover:text-white mb-1">
+                Click or drag & drop a .json database file here
+              </p>
+              <p id="fileStatus" class="text-xs text-slate-400">Supports standard JSON array or { items: [...] } structure</p>
+            </div>
           </div>
         </div>
 
         <!-- User Preference Prompt -->
-        <div class="form-group">
-          <label class="form-label" for="userPreference">
-            User Preference <span>(Natural Language)</span>
+        <div>
+          <label class="block text-sm font-medium text-slate-200 mb-2" for="userPreference">
+            User Preference <span class="text-slate-400 font-normal">(Natural Language)</span>
           </label>
           <textarea
             id="userPreference"
-            placeholder="e.g., Recommend organic high-protein options under $20, or a quiet pet-friendly hotel near the city center..."
+            rows="4"
+            class="w-full bg-slate-900/70 border border-slate-700 rounded-xl p-3.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 transition-all resize-y"
+            placeholder="e.g., Looking for a luxury 5-star hotel near Tsim Sha Tsui with harbor view and breakfast included under HKD 3,000..."
             required
           ></textarea>
         </div>
 
-        <button type="submit" id="submitBtn" class="submit-btn">Confirm & Analyze</button>
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          id="submitBtn"
+          class="w-full bg-brand-500 hover:bg-brand-400 active:bg-brand-600 text-slate-950 font-semibold py-3.5 px-4 rounded-xl shadow-lg shadow-brand-500/20 transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base flex items-center justify-center gap-2"
+        >
+          <span>Confirm & Analyze</span>
+        </button>
       </form>
 
-      <!-- Result / Output Area -->
-      <div id="resultSection" class="result-section">
-        <div class="result-title">AI Recommendation Result</div>
-        <div id="resultOutput" class="result-content"></div>
+      <!-- Recommendation Result Area -->
+      <div id="resultSection" class="mt-8 pt-6 border-t border-slate-700/80 hidden">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+            <h3 class="text-base font-bold text-white tracking-tight">AI Recommendation Result</h3>
+          </div>
+          <button
+            type="button"
+            onclick="backToHome()"
+            class="text-xs text-slate-400 hover:text-brand-400 font-medium transition-colors"
+          >
+            Explore another category →
+          </button>
+        </div>
+        <div
+          id="resultOutput"
+          class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl p-5 text-sm text-slate-200 leading-relaxed font-sans whitespace-pre-wrap selection:bg-brand-500/30"
+        ></div>
       </div>
+
     </div>
   </section>
 </main>
@@ -314,27 +211,78 @@
 <script>
   let currentCategory = "";
   let parsedDatabase = null;
+  let databaseSourceLabel = "";
 
-  function openCategory(category) {
+  function openCategory(category, pushHistory = true) {
     currentCategory = category;
     document.getElementById("activeCategoryTitle").textContent = `${category} Recommendation`;
+    document.getElementById("categoryBadge").textContent = category;
+
+    const hotelBtn = document.getElementById("loadHotelTemplateBtn");
+    if (category === "Hotel") {
+      hotelBtn.classList.remove("hidden");
+    } else {
+      hotelBtn.classList.add("hidden");
+    }
+
     document.getElementById("homeView").classList.remove("active");
     document.getElementById("formView").classList.add("active");
     resetForm();
+
+    if (pushHistory) {
+      history.pushState({ view: "form", category: category }, "", `#${category.toLowerCase()}`);
+    }
   }
 
-  function backToHome() {
+  function backToHome(pushHistory = true) {
     document.getElementById("formView").classList.remove("active");
     document.getElementById("homeView").classList.add("active");
+    resetForm();
+
+    if (pushHistory && location.hash) {
+      history.pushState({ view: "home" }, "", window.location.pathname);
+    }
   }
+
+  window.addEventListener("popstate", (event) => {
+    if (event.state && event.state.view === "form") {
+      openCategory(event.state.category, false);
+    } else {
+      backToHome(false);
+    }
+  });
 
   function resetForm() {
     document.getElementById("recommendationForm").reset();
-    document.getElementById("fileStatus").textContent = "";
-    document.getElementById("dropzoneText").textContent = "Click or drag & drop a .json database file here";
-    document.getElementById("resultSection").classList.remove("active");
+    clearLoadedDatabase();
+    document.getElementById("resultSection").classList.add("hidden");
     document.getElementById("resultOutput").textContent = "";
+  }
+
+  function clearLoadedDatabase() {
     parsedDatabase = null;
+    databaseSourceLabel = "";
+    document.getElementById("dbFile").value = "";
+    document.getElementById("clearDbBtn").classList.add("hidden");
+
+    const dropzone = document.getElementById("dropzoneContainer");
+    dropzone.classList.remove("border-brand-500", "bg-brand-500/5");
+    dropzone.classList.add("border-slate-600");
+
+    document.getElementById("dropzoneIcon").textContent = "📄";
+    document.getElementById("dropzoneText").textContent = "Click or drag & drop a .json database file here";
+    document.getElementById("fileStatus").textContent = "Supports standard JSON array or { items: [...] } structure";
+  }
+
+  function updateDropzoneSuccess(title, statusDetail) {
+    const dropzone = document.getElementById("dropzoneContainer");
+    dropzone.classList.remove("border-slate-600");
+    dropzone.classList.add("border-brand-500", "bg-brand-500/5");
+
+    document.getElementById("clearDbBtn").classList.remove("hidden");
+    document.getElementById("dropzoneIcon").textContent = "✅";
+    document.getElementById("dropzoneText").textContent = title;
+    document.getElementById("fileStatus").textContent = statusDetail;
   }
 
   function handleFileSelect(event) {
@@ -342,7 +290,7 @@
     if (!file) return;
 
     if (!file.name.endsWith(".json")) {
-      alert("Please select a valid .json file.");
+      showMessage("Please select a valid .json file.");
       event.target.value = "";
       return;
     }
@@ -350,23 +298,68 @@
     const reader = new FileReader();
     reader.onload = function(e) {
       try {
-        parsedDatabase = JSON.parse(e.target.result);
-        document.getElementById("dropzoneText").textContent = `Selected: ${file.name}`;
-        document.getElementById("fileStatus").textContent = `Loaded successfully (${(file.size / 1024).toFixed(1)} KB)`;
+        const json = JSON.parse(e.target.result);
+        parsedDatabase = json;
+        databaseSourceLabel = file.name;
+
+        let count = Array.isArray(json) ? json.length : (json.products || json.items || []).length;
+        updateDropzoneSuccess(
+          `Loaded: ${file.name}`,
+          `${count ? count + ' items detected' : 'Valid JSON'} • ${(file.size / 1024).toFixed(1)} KB`
+        );
       } catch (err) {
-        alert("Invalid JSON format in uploaded file.");
-        parsedDatabase = null;
-        event.target.value = "";
+        showMessage("Invalid JSON format in uploaded file.");
+        clearLoadedDatabase();
       }
     };
     reader.readAsText(file);
+  }
+
+  async function loadTemplateJson() {
+    const hotelBtn = document.getElementById("loadHotelTemplateBtn");
+    const originalText = hotelBtn.innerHTML;
+
+    hotelBtn.disabled = true;
+    hotelBtn.innerHTML = `
+        <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+        </svg>
+        Loading template...
+      `;
+
+    try {
+      const response = await fetch("./template.json");
+      if (!response.ok) {
+        throw new Error(`Failed to load template.json (Status: ${response.status})`);
+      }
+      const data = await response.json();
+
+      parsedDatabase = data;
+      databaseSourceLabel = "template.json (Hong Kong Hotels)";
+
+      const count = Array.isArray(data) ? data.length : 0;
+      updateDropzoneSuccess(
+        "Pre-configured Hotel Database Loaded",
+        `template.json • ${count} Hong Kong hotels ready for AI analysis`
+      );
+
+      if (!document.getElementById("userPreference").value.trim()) {
+        document.getElementById("userPreference").value = "I am planning a 3-night luxury stay with a scenic Victoria Harbour view, complimentary breakfast, and close proximity to public transport.";
+      }
+    } catch (err) {
+      showMessage(`Error loading template: ${err.message}. Please verify template.json is in your public or root directory.`);
+    } finally {
+      hotelBtn.disabled = false;
+      hotelBtn.innerHTML = originalText;
+    }
   }
 
   async function handleFormSubmit(event) {
     event.preventDefault();
 
     if (!parsedDatabase) {
-      alert("Please upload a valid JSON database file first.");
+      showMessage("Please upload a .json database or load template.json first.");
       return;
     }
 
@@ -375,27 +368,32 @@
     const resultSection = document.getElementById("resultSection");
     const resultOutput = document.getElementById("resultOutput");
 
-    // 1. 解析與提取資料陣列
+    // Extract product/hotel array
     let productsArray = parsedDatabase;
-    if (!Array.isArray(parsedDatabase) && typeof parsedDatabase === "object") {
-      // 優先檢查常見的陣列屬性鍵值
+    if (!Array.isArray(parsedDatabase) && typeof parsedDatabase === "object" && parsedDatabase !== null) {
       productsArray = parsedDatabase.products ||
         parsedDatabase.items ||
+        parsedDatabase.hotels ||
         parsedDatabase.data ||
         parsedDatabase.list ||
         Object.values(parsedDatabase);
     }
 
-    // 2. 驗證陣列與最低數量限制 (recommend.js 規定至少 3 項)
     if (!Array.isArray(productsArray) || productsArray.length < 3) {
-      alert("The uploaded JSON database must contain at least 3 items.");
+      showMessage("The uploaded JSON database must contain at least 3 items.");
       return;
     }
 
-    // 3. 進入發送狀態：鎖定按鈕並重置前次結果區塊
+    // Enter loading state
     submitBtn.disabled = true;
-    submitBtn.textContent = "Analyzing with AI...";
-    resultSection.classList.remove("active");
+    submitBtn.innerHTML = `
+        <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+        </svg>
+        <span>Analyzing with Gemini AI...</span>
+      `;
+    resultSection.classList.add("hidden");
     resultOutput.textContent = "";
 
     try {
@@ -408,12 +406,12 @@
           products: productsArray,
           preferences: {
             category: currentCategory,
+            source: databaseSourceLabel,
             details: userPreference
           }
         })
       });
 
-      // 處理非 JSON 或錯誤狀態
       const contentType = response.headers.get("content-type");
       let data;
       if (contentType && contentType.includes("application/json")) {
@@ -426,16 +424,23 @@
         throw new Error(data.error || `Server error: ${response.status}`);
       }
 
-      // 4. 成功取得推薦結果並顯示
       resultOutput.textContent = data.recommendation;
-      resultSection.classList.add("active");
+      resultSection.classList.remove("hidden");
+      resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
     } catch (err) {
-      alert(`Failed to get recommendations: ${err.message}`);
+      showMessage(`Failed to get recommendations: ${err.message}`);
     } finally {
-      // 5. 無論成功或失敗，最後必復原按鈕狀態
       submitBtn.disabled = false;
-      submitBtn.textContent = "Confirm & Analyze";
+      submitBtn.innerHTML = `<span>Confirm & Analyze</span>`;
     }
+  }
+
+  function showMessage(msg) {
+    const toast = document.createElement("div");
+    toast.className = "fixed bottom-5 right-5 z-50 bg-rose-900/90 text-white border border-rose-700 px-4 py-3 rounded-xl shadow-2xl text-sm flex items-center gap-3 animate-bounce";
+    toast.innerHTML = `<span>⚠️ ${msg}</span>`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 4000);
   }
 </script>
 </body>
