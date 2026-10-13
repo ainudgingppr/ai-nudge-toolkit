@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Concierge - AI Recommendations</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --border: #334155;
+      --success: #34d399;
+      --error: #f87171;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    header h1 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      margin-bottom: 0.5rem;
+    }
+
+    header p {
+      color: var(--text-sub);
+      font-size: 1rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 760px;
+    }
+
+    /* Home View: Cards */
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .category-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .category-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+
+    .category-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .category-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .category-desc {
+      font-size: 0.875rem;
+      color: var(--text-sub);
+    }
+
+    /* Detail View: Form */
+    .form-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+    }
+
+    .back-btn {
+      background: none;
+      border: none;
+      color: var(--accent);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .back-btn:hover {
+      text-decoration: underline;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+    }
+
+    .form-label span {
+      color: var(--text-sub);
+      font-weight: 400;
+    }
+
+    .file-dropzone {
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .file-dropzone:hover {
+      border-color: var(--accent);
+    }
+
+    .file-dropzone input[type="file"] {
+      display: none;
+    }
+
+    .file-info {
+      font-size: 0.875rem;
+      color: var(--text-sub);
+      margin-top: 0.5rem;
+    }
+
+    textarea {
+      width: 100%;
+      background-color: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      min-height: 120px;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    textarea:focus {
+      border-color: var(--accent);
+    }
+
+    .submit-btn {
+      width: 100%;
+      background-color: var(--accent);
+      color: #0f172a;
+      border: none;
+      border-radius: 8px;
+      padding: 0.875rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .submit-btn:hover:not(:disabled) {
+      background-color: var(--accent-hover);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* Result Section */
+    .result-section {
+      margin-top: 2rem;
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+      display: none;
+    }
+
+    .result-section.active {
+      display: block;
+    }
+
+    .result-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: var(--success);
+    }
+
+    .result-content {
+      background-color: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      white-space: pre-wrap;
+      font-family: inherit;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>AI Nudging</h1>
+  <p>Upload your database and specify your requirements for tailored recommendations</p>
+</header>
+
+<main class="container">
+  <!-- Category Selection View -->
+  <section id="homeView" class="view active">
+    <div class="category-grid">
+      <div class="category-card" onclick="openCategory('Grocery')">
+        <div class="category-icon">🛒</div>
+        <div class="category-title">Grocery</div>
+        <div class="category-desc">Fresh food, pantry supplies, and store inventory</div>
+      </div>
+      <div class="category-card" onclick="openCategory('Hotel')">
+        <div class="category-icon">🏨</div>
+        <div class="category-title">Hotel</div>
+        <div class="category-desc">Accommodations, amenities, and room availability</div>
+      </div>
+      <div class="category-card" onclick="openCategory('Restaurant')">
+        <div class="category-icon">🍽️</div>
+        <div class="category-title">Restaurant</div>
+        <div class="category-desc">Dining spots, dietary menus, and reservations</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Detail View: Form & Results -->
+  <section id="formView" class="view">
+    <div class="form-card">
+      <button class="back-btn" onclick="backToHome()">← Back to Categories</button>
+      <h2 id="activeCategoryTitle" style="margin-bottom: 1.5rem;">Category Analysis</h2>
+
+      <form id="recommendationForm" onsubmit="handleFormSubmit(event)">
+        <!-- JSON Upload -->
+        <div class="form-group">
+          <label class="form-label">
+            Database File <span>(.json format)</span>
+          </label>
+          <div class="file-dropzone" onclick="document.getElementById('dbFile').click()">
+            <input type="file" id="dbFile" accept=".json" onchange="handleFileSelect(event)" />
+            <div id="dropzoneText">Click or drag & drop a .json database file here</div>
+            <div id="fileStatus" class="file-info"></div>
+          </div>
+        </div>
+
+        <!-- User Preference Prompt -->
+        <div class="form-group">
+          <label class="form-label" for="userPreference">
+            User Preference <span>(Natural Language)</span>
+          </label>
+          <textarea
+            id="userPreference"
+            placeholder="e.g., Recommend organic high-protein options under $20, or a quiet pet-friendly hotel near the city center..."
+            required
+          ></textarea>
+        </div>
+
+        <button type="submit" id="submitBtn" class="submit-btn">Confirm & Analyze</button>
+      </form>
+
+      <!-- Result / Output Area -->
+      <div id="resultSection" class="result-section">
+        <div class="result-title">AI Recommendation Result</div>
+        <div id="resultOutput" class="result-content"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+  let currentCategory = "";
+  let parsedDatabase = null;
+
+  function openCategory(category) {
+    currentCategory = category;
+    document.getElementById("activeCategoryTitle").textContent = `${category} Recommendation`;
+    document.getElementById("homeView").classList.remove("active");
+    document.getElementById("formView").classList.add("active");
+    resetForm();
+  }
+
+  function backToHome() {
+    document.getElementById("formView").classList.remove("active");
+    document.getElementById("homeView").classList.add("active");
+  }
+
+  function resetForm() {
+    document.getElementById("recommendationForm").reset();
+    document.getElementById("fileStatus").textContent = "";
+    document.getElementById("dropzoneText").textContent = "Click or drag & drop a .json database file here";
+    document.getElementById("resultSection").classList.remove("active");
+    document.getElementById("resultOutput").textContent = "";
+    parsedDatabase = null;
+  }
+
+  function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (!file.name.endsWith(".json")) {
+      alert("Please select a valid .json file.");
+      event.target.value = "";
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        parsedDatabase = JSON.parse(e.target.result);
+        document.getElementById("dropzoneText").textContent = `Selected: ${file.name}`;
+        document.getElementById("fileStatus").textContent = `Loaded successfully (${(file.size / 1024).toFixed(1)} KB)`;
+      } catch (err) {
+        alert("Invalid JSON format in uploaded file.");
+        parsedDatabase = null;
+        event.target.value = "";
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  async function handleFormSubmit(event) {
+    event.preventDefault();
+
+    if (!parsedDatabase) {
+      alert("Please upload a valid JSON database file first.");
+      return;
+    }
+
+    const userPreference = document.getElementById("userPreference").value.trim();
+    const submitBtn = document.getElementById("submitBtn");
+    const resultSection = document.getElementById("resultSection");
+    const resultOutput = document.getElementById("resultOutput");
+
+    // 1. 解析與提取資料陣列
+    let productsArray = parsedDatabase;
+    if (!Array.isArray(parsedDatabase) && typeof parsedDatabase === "object") {
+      // 優先檢查常見的陣列屬性鍵值
+      productsArray = parsedDatabase.products ||
+        parsedDatabase.items ||
+        parsedDatabase.data ||
+        parsedDatabase.list ||
+        Object.values(parsedDatabase);
+    }
+
+    // 2. 驗證陣列與最低數量限制 (recommend.js 規定至少 3 項)
+    if (!Array.isArray(productsArray) || productsArray.length < 3) {
+      alert("The uploaded JSON database must contain at least 3 items.");
+      return;
+    }
+
+    // 3. 進入發送狀態：鎖定按鈕並重置前次結果區塊
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Analyzing with AI...";
+    resultSection.classList.remove("active");
+    resultOutput.textContent = "";
+
+    try {
+      const response = await fetch("/api/recommend", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          products: productsArray,
+          preferences: {
+            category: currentCategory,
+            details: userPreference
+          }
+        })
+      });
+
+      // 處理非 JSON 或錯誤狀態
+      const contentType = response.headers.get("content-type");
+      let data;
+      if (contentType && contentType.includes("application/json")) {
+        data = await response.json();
+      } else {
+        throw new Error(`Server returned unexpected response (${response.status})`);
+      }
+
+      if (!response.ok) {
+        throw new Error(data.error || `Server error: ${response.status}`);
+      }
+
+      // 4. 成功取得推薦結果並顯示
+      resultOutput.textContent = data.recommendation;
+      resultSection.classList.add("active");
+    } catch (err) {
+      alert(`Failed to get recommendations: ${err.message}`);
+    } finally {
+      // 5. 無論成功或失敗，最後必復原按鈕狀態
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Confirm & Analyze";
+    }
+  }
+</script>
+</body>
+</html>
